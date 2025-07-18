@@ -165,6 +165,23 @@ cp .env.example .env
 pytest tests/
 ```
 
+## Configuración de Donut OCR
+
+Donut (Document Understanding Transformer) es un modelo de IA avanzado para extracción de texto y comprensión de documentos. 
+
+### Parámetros de Configuración
+
+```python
+# Configuración en .env
+MODEL_NAME=naver-clova-ix/donut-base-finetuned-cord-v2  # Modelo pre-entrenado
+USE_GPU=false                    # Usar GPU si está disponible
+PDF_DPI=200                     # Resolución de escaneo
+MAX_OUTPUT_LENGTH=1024          # Longitud máxima de salida
+NUM_BEAMS=4                     # Número de beams para búsqueda
+NUM_THREADS=4                   # Hilos para procesamiento
+TEMPERATURE=0.8                 # Temperatura de generación
+```
+
 ## Contribución
 
 1. Fork el repositorio
