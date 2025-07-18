@@ -1,12 +1,31 @@
-# src/config/container.py
+"""
+Configuración principal del proyecto OCR-LLM usando Donut.
+"""
+
 from dependency_injector import containers, providers
-from infrastructure.tesseract_adapter import TesseractAdapter
-from infrastructure.openai_llm_adapter import OpenAIAdapter
+from infrastructure.donut_adapter import DonutAdapter
+from infrastructure.file_storage import LocalFileStorage
 from domain.use_cases import DocumentProcessor
 from pydantic_settings import BaseSettings
+from pathlib import Path
 
 class Settings(BaseSettings):
-    # Donut Configuration
+    """
+    Configuración para el procesamiento de documentos con Donut.
+    
+    Attributes:
+        model_name: Nombre del modelo pre-entrenado de Donut
+        use_gpu: Si se debe usar GPU para el procesamiento
+        pdf_dpi: Resolución para la conversión de PDF a imagen
+        max_output_length: Longitud máxima del texto generado
+        num_beams: Número de beams para la búsqueda
+        num_threads: Hilos para procesamiento paralelo
+        temperature: Temperatura para la generación de texto
+        redis_url: URL de conexión a Redis
+        redis_cache_ttl_hours: Tiempo de vida del caché en horas
+        enable_cache: Si se debe utilizar el caché
+    """
+    # Configuración de Donut
     model_name: str = "naver-clova-ix/donut-base-finetuned-cord-v2"
     use_gpu: bool = False
     pdf_dpi: int = 200
@@ -15,33 +34,20 @@ class Settings(BaseSettings):
     num_threads: int = 4
     temperature: float = 0.8
     
+    # Configuración de Redis
+    redis_url: str = "redis://localhost:6379/0"
+    redis_cache_ttl_hours: int = 24
+    enable_cache: bool = True
+    
     # Paths
-    temp_dir: str = "/tmp/ocr-llm"
-    input_dir: str = "pdfs"
-    output_dir: str = "output"
+    temp_dir: Path = Path("/tmp/ocr-llm")
+    input_dir: Path = Path("pdfs")
+    output_dir: Path = Path("output")
 
-class Container(containers.DeclarativeContainer):
-    config = providers.Configuration()
-    
-    ocr_service = providers.Singleton(
-        TesseractAdapter,
-        config=config.ocr
-    )
-    
-    llm_service = providers.Singleton(
-        OpenAIAdapter,
-        api_key=config.openai.api_key,
-        model=config.openai.model
-    )
-    
-    storage_service = providers.Singleton(
-        FileStorageAdapter,
-        base_path=config.storage.path
-    )
-    
-    document_processor = providers.Singleton(
-        DocumentProcessor,
-        ocr_service=ocr_service,
-        llm_service=llm_service,
-        storage_service=storage_service
-    )
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.temp_dir.mkdir(parents=True, exist_ok=True)
+        self.input_dir.mkdir(parents=True, exist_ok=True)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+
+# La clase Container se ha movido a container.py
