@@ -4,7 +4,6 @@ requires-python = ">=3.10"
 dependencies = [
     "openai>=1.11",
     "pymupdf==1.24.2",
-    "pytesseract",  # mantener como fallback
     "pydantic>=2",
     "pydantic-settings",
     "python-dotenv",
@@ -15,7 +14,6 @@ dependencies = [
     "pdf2image",
     "pillow",
     "torch",
-    "doctr",  # alternativa ligera
 ]
 
 [project.optional-dependencies]
