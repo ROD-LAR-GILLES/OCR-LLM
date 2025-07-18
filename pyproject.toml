@@ -30,9 +30,13 @@ dependencies = [
 dev = [
     "pytest",
     "pytest-cov",
+    "pytest-asyncio",
+    "pytest-mock",
+    "httpx",
     "black",
     "isort",
     "mypy",
+    "faker",
 ]
 
 [project.scripts]
