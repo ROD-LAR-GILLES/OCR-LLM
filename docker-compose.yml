@@ -1,0 +1,10 @@
+services:
+  ocr:
+    build: .
+    container_name: ocr-donut
+    volumes:
+      - ./pdfs:/app/pdfs
+      - ./output:/app/output
+    environment:
+      - PDF_DPI=200
+      - MODEL_NAME=naver-clova-ix/donut-base

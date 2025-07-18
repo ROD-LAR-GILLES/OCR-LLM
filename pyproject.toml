@@ -1,45 +1,13 @@
 [project]
-name = "ocr-llm-cli"
+name = "ocr-donut"
+version = "0.1.0"
 requires-python = ">=3.10"
 dependencies = [
-    "pymupdf==1.24.2",
-    "pydantic>=2",
-    "pydantic-settings",
-    "python-dotenv",
-    "rich",
-    "click>=8.0",
-    "dependency-injector>=4.41",
     "transformers>=4.38.2",
+    "torch>=2.2.0; platform_system == 'Darwin' and platform_machine == 'arm64'",
     "pdf2image",
     "pillow",
-    "torch",
-    # Monitoring and logging
-    "opentelemetry-api>=1.20.0",
-    "opentelemetry-sdk>=1.20.0",
-    "opentelemetry-instrumentation>=0.41b0",
-    "structlog>=23.1.0",
-    "prometheus-client>=0.17.0",
-    # API dependencies
-    "fastapi>=0.104.0",
-    "uvicorn[standard]>=0.24.0",
-    "python-multipart>=0.0.6",
-    "aiofiles>=23.2.1",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest",
-    "pytest-cov",
-    "pytest-asyncio",
-    "pytest-mock",
-    "httpx",
-    "black",
-    "isort",
-    "mypy",
-    "faker",
-    "ruff",
-    "build",
-    "wheel",
+    "python-dotenv"
 ]
 
 [tool.black]

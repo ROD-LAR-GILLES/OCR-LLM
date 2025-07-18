@@ -8,12 +8,12 @@ Sistema de OCR basado en el modelo Donut con procesamiento asíncrono y API REST
 
 ## Características
 
-- 🔍 OCR de alta precisión usando el modelo Donut
-- 🚀 Procesamiento asíncrono de documentos
-- 📊 API REST con FastAPI
-- 💾 Sistema de caché con Redis
-- 📈 Monitoreo y métricas con Prometheus
-- 🔄 Soporte para procesamiento por lotes
+-  OCR de alta precisión usando el modelo Donut
+-  Procesamiento asíncrono de documentos
+-  API REST con FastAPI
+-  Sistema de caché con Redis
+-  Monitoreo y métricas con Prometheus
+-  Soporte para procesamiento por lotes
 
 ## Inicio Rápido
 
@@ -111,7 +111,7 @@ Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](L
 
 Sistema de procesamiento de documentos PDF que combina OCR avanzado usando Donut (Document Understanding Transformer) con LLM (Modelos de Lenguaje Grande) para extraer y mejorar texto de documentos escaneados.
 
-## 🚀 Características
+##  Características
 
 - **OCR Avanzado con Donut**: Extracción de texto estructurado sin dependencia de Tesseract
 - **Reconocimiento de Estructura**: Detecta párrafos, tablas y encabezados
@@ -119,7 +119,7 @@ Sistema de procesamiento de documentos PDF que combina OCR avanzado usando Donut
 - **Mejora con LLM**: Refina y estructura el texto extraído
 - **Flexible**: Soporta múltiples motores OCR (Donut, Tesseract, DocTR)
 
-## 🛠️ Motores OCR Disponibles
+##  Motores OCR Disponibles
 
 1. **Donut** (Predeterminado)
    - Basado en transformers

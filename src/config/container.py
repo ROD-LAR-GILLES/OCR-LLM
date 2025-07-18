@@ -1,10 +1,20 @@
 from dependency_injector import containers, providers
+from .settings import Settings
+from infrastructure.redis_cache import RedisCache
 from infrastructure.donut_adapter import DonutAdapter
 from infrastructure.file_storage import LocalFileStorage
 from domain.use_cases import DocumentProcessor
 
 class Container(containers.DeclarativeContainer):
-    config = providers.Configuration()
+    """Contenedor de dependencias para la aplicación."""
+    
+    config = providers.Singleton(Settings)
+    
+    # Servicios base
+    cache = providers.Singleton(
+        RedisCache,
+        redis_url=config.provided.redis_url
+    ) if config.provided.enable_cache else None
     
     ocr_service = providers.Singleton(
         DonutAdapter,
