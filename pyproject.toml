@@ -19,6 +19,11 @@ dependencies = [
     "opentelemetry-instrumentation>=0.41b0",
     "structlog>=23.1.0",
     "prometheus-client>=0.17.0",
+    # API dependencies
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "python-multipart>=0.0.6",
+    "aiofiles>=23.2.1",
 ]
 
 [project.optional-dependencies]
