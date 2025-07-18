@@ -1,4 +1,113 @@
-# OCR-LLM: Procesamiento de Documentos con OCR y LLM
+# OCR-LLM
+
+Sistema de OCR basado en el modelo Donut con procesamiento asíncrono y API REST.
+
+[![CI/CD](https://github.com/ROD-LAR-GILLES/OCR-LLM/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ROD-LAR-GILLES/OCR-LLM/actions/workflows/ci-cd.yml)
+[![Coverage](https://codecov.io/gh/ROD-LAR-GILLES/OCR-LLM/branch/main/graph/badge.svg)](https://codecov.io/gh/ROD-LAR-GILLES/OCR-LLM)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Características
+
+- 🔍 OCR de alta precisión usando el modelo Donut
+- 🚀 Procesamiento asíncrono de documentos
+- 📊 API REST con FastAPI
+- 💾 Sistema de caché con Redis
+- 📈 Monitoreo y métricas con Prometheus
+- 🔄 Soporte para procesamiento por lotes
+
+## Inicio Rápido
+
+### Instalación
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/ROD-LAR-GILLES/OCR-LLM.git
+cd OCR-LLM
+
+# Crear un entorno virtual
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+
+# Instalar dependencias
+pip install -e ".[dev]"
+```
+
+### Uso Básico
+
+```python
+from ocr_llm.application.document_service import DocumentService
+
+# Procesar un documento
+document = await document_service.process_one("documento.pdf")
+print(document.text)
+
+# Procesar múltiples documentos
+documents = await document_service.process_batch(["doc1.pdf", "doc2.pdf"])
+```
+
+### Uso de la API
+
+```bash
+# Iniciar la API
+uvicorn src.interfaces.api.app:app --reload
+
+# Procesar un documento vía API
+curl -X POST http://localhost:8000/api/v1/documents \
+  -F "file=@documento.pdf" \
+  -F "quality=90"
+```
+
+## Documentación
+
+- [Guía de Instalación](docs/installation.md)
+- [Documentación de la API](docs/api.md)
+- [Guía de Desarrollo](docs/development.md)
+- [Arquitectura](docs/architecture.md)
+
+## Desarrollo
+
+### Configuración del Entorno
+
+```bash
+# Instalar dependencias de desarrollo
+pip install -e ".[dev]"
+
+# Ejecutar pruebas
+pytest
+
+# Verificar formato
+black src tests
+isort src tests
+
+# Verificar tipos
+mypy src tests
+```
+
+### Docker
+
+```bash
+# Construir imagen
+docker build -t ocr-llm .
+
+# Ejecutar
+docker run -p 8000:8000 ocr-llm
+```
+
+## Monitoreo
+
+El proyecto incluye endpoints de monitoreo:
+
+- `/metrics` - Métricas Prometheus
+- `/health` - Estado del servicio
+- `/docs` - Documentación OpenAPI
+
+## Contribuir
+
+¡Las contribuciones son bienvenidas! Por favor, lee nuestra [Guía de Contribución](CONTRIBUTING.md).
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.: Procesamiento de Documentos con OCR y LLM
 
 Sistema de procesamiento de documentos PDF que combina OCR avanzado usando Donut (Document Understanding Transformer) con LLM (Modelos de Lenguaje Grande) para extraer y mejorar texto de documentos escaneados.
 
