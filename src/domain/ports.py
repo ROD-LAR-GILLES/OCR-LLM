@@ -12,7 +12,7 @@ class PdfPort(ABC):
     def extract_pages(self, pdf_path: str) -> list[bytes]:
         """Extrae las páginas de un PDF como imágenes"""
         pass
-
+            
     @abstractmethod
     def save_with_text(self, pdf_path: str, document: Document) -> str:
         """Guarda un PDF con el texto refinado incrustado"""
