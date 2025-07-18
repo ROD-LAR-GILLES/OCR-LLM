@@ -4,13 +4,27 @@ requires-python = ">=3.10"
 dependencies = [
     "openai>=1.11",
     "pymupdf==1.24.2",
-    "pytesseract",
+    "pytesseract",  # mantener como fallback
     "pydantic>=2",
     "pydantic-settings",
     "python-dotenv",
     "rich",
     "click>=8.0",
     "dependency-injector>=4.41",
+    "transformers>=4.38.2",
+    "pdf2image",
+    "pillow",
+    "torch",
+    "doctr",  # alternativa ligera
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "black",
+    "isort",
+    "mypy",
 ]
 
 [project.scripts]
