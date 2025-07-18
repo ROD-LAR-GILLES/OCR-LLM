@@ -32,6 +32,7 @@ docker-compose.override.yml
 # Archivos de resultados o datos procesados
 resultado/
 pdfs/
+README_CONV.md
 
 # Archivos de dependencias locales
 *.egg-info/

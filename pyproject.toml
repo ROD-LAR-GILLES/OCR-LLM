@@ -2,10 +2,24 @@
 name = "ocr-llm-cli"
 requires-python = ">=3.10"
 dependencies = [
-  "openai>=1.11",
-  "pymupdf==1.24.2",
-  "pytesseract",
-  "pydantic>=2",
-  "python-dotenv",
-  "rich",        # CLI bonita (opcional)
+    "openai>=1.11",
+    "pymupdf==1.24.2",
+    "pytesseract",
+    "pydantic>=2",
+    "pydantic-settings",
+    "python-dotenv",
+    "rich",
+    "click>=8.0",
+    "dependency-injector>=4.41",
 ]
+
+[project.scripts]
+ocr-llm = "src.interfaces.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=src"
+
+[tool.coverage.run]
+source = ["src"]
