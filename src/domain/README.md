@@ -11,15 +11,15 @@ Define las entidades principales del dominio.
 ```python
 @dataclass
 class Page:
-    number: int           # Número de página
-    raw_text: str        # Texto extraído por OCR
-    refined_text: str    # Texto mejorado por LLM
+    number: 	 int          
+    raw_text: 	 str      
+    refined_text: str    
 
 @dataclass
 class Document:
-    name: str           # Nombre del documento
-    pages: List[Page]   # Lista de páginas
-    metadata: dict      # Metadatos adicionales
+    name: 		 str          
+    pages: 		 List[Page]  
+    metadata: 	 dict     
 ```
 
 ### `ports.py`
@@ -55,9 +55,9 @@ Implementa los casos de uso de la aplicación.
 class DocumentProcessor:
     """Caso de uso principal para procesar documentos"""
     def __init__(self, ocr: OcrPort, llm: LlmPort, storage: StoragePort):
-        self.ocr = ocr
-        self.llm = llm
-        self.storage = storage
+        self.ocr 	 	= 		ocr
+        self.llm 	 	= 		llm
+        self.storage 	= 		storage
     
     def process_document(self, request: ProcessDocumentRequest) -> Document:
         # Implementa el flujo principal de procesamiento
