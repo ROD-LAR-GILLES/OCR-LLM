@@ -1,31 +1,69 @@
-.PHONY: dev-up dev-down test build clean logs shell
-.PHONY: up down build logs process clean
+.PHONY: dev-up dev-down test build clean logs shell setup quality
+
+# Development environment
 dev-up:
-	@echo "Starting development environment..."niciar servicios
+	@echo "🚀 Starting development environment..."
 	docker-compose -f docker-compose.dev.yml up -d
 
-dev-down:	docker compose up -d --build
-	@echo "Stopping development environment..."
-	docker-compose -f docker-compose.dev.yml downener servicios
+dev-down:
+	@echo "🛑 Stopping development environment..."
+	docker-compose -f docker-compose.dev.yml down
 
-test:	docker compose down
-	@echo "Running tests..."
-	docker-compose -f docker-compose.dev.yml exec app pytest tests/nstruir servicios
+# Testing and quality
+test:
+	@echo "🧪 Running tests..."
+	docker-compose -f docker-compose.dev.yml exec app pytest tests/ -v
 
-build:	docker compose build
-	@echo "Building application..."
-	docker build -t ocr-llm:latest . logs
+test-coverage:
+	@echo "📊 Running tests with coverage..."
+	docker-compose -f docker-compose.dev.yml exec app pytest tests/ --cov=src --cov-report=html
 
-clean:	docker compose logs -f
-	@echo "Cleaning up..."
-	docker-compose -f docker-compose.dev.yml down -v
-	docker system prune -fake process PDF=nombre_archivo.pdf
+quality:
+	@echo "🔍 Running code quality checks..."
+	docker-compose -f docker-compose.dev.yml exec app black --check src tests
+	docker-compose -f docker-compose.dev.yml exec app isort --check-only src tests
+	docker-compose -f docker-compose.dev.yml exec app flake8 src tests
 
+# Building and deployment
+build:
+	@echo "🏗️ Building application..."
+	docker build -t ocr-llm:latest .
+
+# Utilities
 logs:
-	docker-compose -f docker-compose.dev.yml logs -f appecifica el PDF a procesar: make process PDF=archivo.pdf"; \
-xit 1; \
+	@echo "📝 Showing application logs..."
+	docker-compose -f docker-compose.dev.yml logs -f app
+
 shell:
-	docker-compose -f docker-compose.dev.yml exec app /bin/bash	docker compose exec ocr python ocr_donut.py "pdfs/$(PDF)"
+	@echo "🐚 Opening application shell..."
+	docker-compose -f docker-compose.dev.yml exec app /bin/bash
+
+clean:
+	@echo "🧹 Cleaning up..."
+	docker-compose -f docker-compose.dev.yml down -v
+	docker system prune -f
+
+# Document processing
+process:
+	@if [ -z "$(PDF)" ]; then \
+		echo "❌ Error: Especifica el PDF a procesar: make process PDF=archivo.pdf"; \
+		exit 1; \
+	fi
+	@echo "📄 Processing $(PDF)..."
+	docker-compose -f docker-compose.dev.yml exec app python -m src.interfaces.cli $(PDF)
+
+# Setup and configuration
+setup:
+	@echo "⚙️ Setting up project..."
+	@mkdir -p pdfs output logs monitoring/grafana/dashboards redis
+	@cp .env.example .env || echo "⚠️ Configure .env manually"
+	@echo "✅ Setup complete!"
+
+# Health checks
+health:
+	@echo "🏥 Checking service health..."
+	@curl -f http://localhost:8000/health || echo "❌ App health check failed"
+	@redis-cli -h localhost ping || echo "❌ Redis health check failed"
 
 jaeger:
     image: jaegertracing/all-in-one:latest
