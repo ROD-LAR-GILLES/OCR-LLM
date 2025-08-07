@@ -5,8 +5,9 @@ from typing import List, Optional
 import asyncio
 import hashlib
 from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor
 
-from domain.models import Document
+from domain.models import Document, ProcessDocumentRequest
 from domain.ports import OcrPort, StoragePort
 from domain.cache_port import CachePort
 
@@ -16,11 +17,12 @@ class DocumentService:
     Coordina las operaciones entre el OCR y el almacenamiento.
     """
     
-    def __init__(self, ocr: OcrPort, storage: StoragePort, cache: Optional[CachePort] = None):
+    def __init__(self, ocr: OcrPort, storage: StoragePort, cache: Optional[CachePort] = None, max_workers: int = 4):
         self.ocr = ocr
         self.storage = storage
         self.cache = cache
         self.cache_ttl = timedelta(hours=24)  # Cache por 24 horas por defecto
+        self.executor = ThreadPoolExecutor(max_workers=max_workers)
         
     def _generate_cache_key(self, path: str) -> str:
         """Genera una clave única para el caché basada en el path y el contenido del archivo"""
@@ -68,15 +70,33 @@ class DocumentService:
         
         return document
         
-    async def process_batch(self, paths: List[str]) -> List[Document]:
-        """
-        Procesa múltiples documentos en paralelo.
+    async def process_documents_async(
+        self, 
+        requests: List[ProcessDocumentRequest]
+    ) -> List[Document]:
+        """Procesa múltiples documentos de forma asíncrona"""
+        loop = asyncio.get_event_loop()
         
-        Args:
-            paths: Lista de rutas a documentos
-            
-        Returns:
-            List[Document]: Lista de documentos procesados
-        """
-        tasks = [self.process_one(path) for path in paths]
+        tasks = [
+            loop.run_in_executor(
+                self.executor, 
+                self.ocr.extract_text, 
+                request
+            )
+            for request in requests
+        ]
+        
         return await asyncio.gather(*tasks)
+    
+    def process_batch(
+        self, 
+        requests: List[ProcessDocumentRequest],
+        batch_size: int = 3
+    ) -> List[Document]:
+        """Procesa en lotes para optimizar memoria"""
+        results = []
+        for i in range(0, len(requests), batch_size):
+            batch = requests[i:i + batch_size]
+            batch_results = asyncio.run(self.process_documents_async(batch))
+            results.extend(batch_results)
+        return results
