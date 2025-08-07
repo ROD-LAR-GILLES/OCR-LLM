@@ -1,33 +1,36 @@
 from dependency_injector import containers, providers
-from .settings import Settings
-from infrastructure.redis_cache import RedisCache
 from infrastructure.donut_adapter import DonutAdapter
 from infrastructure.file_storage import LocalFileStorage
+from infrastructure.redis_cache import RedisCache
 from domain.use_cases import DocumentProcessor
+from config.settings import Settings
 
 class Container(containers.DeclarativeContainer):
-    """Contenedor de dependencias para la aplicación."""
+    # Configuración
+    config = providers.Configuration()
+    settings = providers.Singleton(Settings)
     
-    config = providers.Singleton(Settings)
-    
-    # Servicios base
-    cache = providers.Singleton(
-        RedisCache,
-        redis_url=config.provided.redis_url
-    ) if config.provided.enable_cache else None
-    
-    ocr_service = providers.Singleton(
+    # Servicios de infraestructura
+    donut_adapter = providers.Singleton(
         DonutAdapter,
-        settings=config
+        config=config.donut
     )
     
-    storage_service = providers.Singleton(
+    file_storage = providers.Singleton(
         LocalFileStorage,
-        base_path=config.output_dir
+        base_path=settings.provided.output_dir
     )
     
+    redis_cache = providers.Singleton(
+        RedisCache,
+        redis_url=settings.provided.redis_url,
+        ttl_hours=settings.provided.redis_cache_ttl_hours
+    )
+    
+    # Casos de uso
     document_processor = providers.Singleton(
         DocumentProcessor,
-        ocr_service=ocr_service,
-        storage_service=storage_service
+        ocr=donut_adapter,
+        storage=file_storage,
+        cache=redis_cache
     )
