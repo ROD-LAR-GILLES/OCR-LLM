@@ -1,0 +1,29 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "OCR-LLM Monitoring",
+    "description": "Monitoring dashboard for OCR-LLM application",
+    "panels": [
+      {
+        "title": "Document Processing Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(ocr_documents_processed_total[5m])",
+            "legendFormat": "Documents/sec"
+          }
+        ]
+      },
+      {
+        "title": "Processing Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(ocr_processing_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          }
+        ]
+      }
+    ]
+  }
+}
