@@ -1,34 +1,38 @@
 FROM python:3.11-slim
-
-# Instalar dependencias del sistema necesarias
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
-    poppler-utils \
-    gcc \
-    python3-dev \
-    protobuf-compiler \
+FROM python:3.11-slim
+# Install system dependencies
+RUN apt-get update && apt-get install -y \rias
+    curl \ apt-get install -y \
+    gcc \ \
+    g++ \er-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Crear directorio de la aplicación
-WORKDIR /app
+# Set working directory
+WORKDIR /app    && rm -rf /var/lib/apt/lists/*
 
-# Copiar solo los archivos necesarios
-COPY pyproject.toml ocr_donut.py ./
+# Copy requirements first for better cachingctorio de la aplicación
+COPY requirements.txt .WORKDIR /app
+RUN pip install --no-cache-dir -r requirements.txt
+os
+# Copy application codeCOPY pyproject.toml ocr_donut.py ./
+COPY src/ ./src/
+COPY tests/ ./tests/
 
-# Instalar dependencias Python
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu && \
-    pip install --no-cache-dir transformers pdf2image pillow python-dotenv protobuf sentencepiece
+# Create necessary directoriesorg/whl/cpu && \
+RUN mkdir -p /app/pdfs /app/output /app/logs    pip install --no-cache-dir transformers pdf2image pillow python-dotenv protobuf sentencepiece
 
-# Crear directorios para PDFs y resultados
-RUN mkdir -p /app/pdfs /app/output
+# Add non-root usersultados
+RUN useradd -m -u 1000 ocruser && chown -R ocruser:ocruser /appRUN mkdir -p /app/pdfs /app/output
+USER ocruser
+torno
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \    MODEL_NAME="naver-clova-ix/donut-base"
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Variables de entorno
-ENV PDF_DPI=200 \
-    MODEL_NAME="naver-clova-ix/donut-base"
+# Expose portVOLUME ["/app/pdfs", "/app/output"]
+EXPOSE 8000
+ndo
+# Start applicationCMD ["tail", "-f", "/dev/null"]
 
-# Volúmenes para PDFs y resultados
-VOLUME ["/app/pdfs", "/app/output"]
 
-# Mantener el contenedor corriendo
-CMD ["tail", "-f", "/dev/null"]
+CMD ["uvicorn", "src.interfaces.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
