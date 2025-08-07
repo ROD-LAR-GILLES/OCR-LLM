@@ -15,8 +15,9 @@ class DonutAdapter(OcrPort):
     def __init__(self, settings: Settings):
         """Inicializa el adaptador Donut con la configuración especificada"""
         self.settings = settings
-        self.processor = DonutProcessor.from_pretrained("naver-clova/donut-base")
-        self.model = VisionEncoderDecoderModel.from_pretrained("naver-clova/donut-base")
+        self.model_name = "naver-clova-ix/donut-base-finetuned-cord-v2"
+        self.processor = DonutProcessor.from_pretrained(self.model_name)
+        self.model = VisionEncoderDecoderModel.from_pretrained(self.model_name)
         
         # Mover a CPU/GPU según configuración
         self.device = "cuda" if torch.cuda.is_available() and settings.use_gpu else "cpu"
