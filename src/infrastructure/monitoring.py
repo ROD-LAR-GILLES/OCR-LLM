@@ -5,7 +5,9 @@ from typing import Any, Dict, Optional
 import structlog
 from opentelemetry import trace
 from opentelemetry.trace import Span, Status, StatusCode
-from prometheus_client import Counter, Histogram, Info
+from prometheus_client import Counter, Histogram, Info, Gauge, generate_latest
+import time
+from functools import wraps
 
 # Configuración de logging estructurado
 logger = structlog.get_logger(__name__)
@@ -33,6 +35,29 @@ MODEL_INFO = Info(
     "model_information",
     "Information about the OCR model being used"
 )
+
+# Métricas adicionales
+processed_documents = Counter('ocr_documents_processed_total', 'Total de documentos procesados')
+processing_time = Histogram('ocr_processing_seconds', 'Tiempo de procesamiento')
+cache_hits = Counter('ocr_cache_hits_total', 'Cache hits')
+active_jobs = Gauge('ocr_active_jobs', 'Trabajos activos')
+
+def monitor_processing(func):
+    """Decorator para monitorear procesamiento"""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        active_jobs.inc()
+        
+        try:
+            result = func(*args, **kwargs)
+            processed_documents.inc()
+            return result
+        finally:
+            processing_time.observe(time.time() - start_time)
+            active_jobs.dec()
+    
+    return wrapper
 
 class DocumentProcessingTracer:
     """
